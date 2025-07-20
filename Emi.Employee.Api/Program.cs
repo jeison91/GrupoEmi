@@ -1,4 +1,4 @@
-using Emi.Common;
+using Emi.Common.Exceptions;
 using Emi.Employee.Api.DI;
 using Emi.Employees.Application.DTO;
 using Microsoft.Extensions.Configuration;

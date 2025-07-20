@@ -17,10 +17,11 @@ namespace Emi.Employees.Infrastructure.Configuration
             builder.HasKey(x => x.Id );
             builder.Property(x => x.Id).IsRequired();
             builder.Property(x => x.Name).HasMaxLength(100).IsRequired(true);
+            builder.Property(x => x.IsManager).IsRequired();
 
-            builder.HasMany(p => p.Employees)
-                .WithOne(e => e.PositionTrace)
-                .HasForeignKey(e => e.CurrentPosition);
+            builder.HasMany(x => x.Employees)
+                .WithOne(x => x.PositionTrace)
+                .HasForeignKey(x => x.CurrentPosition);
         }
     }
 }

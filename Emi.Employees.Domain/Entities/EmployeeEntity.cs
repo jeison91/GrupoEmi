@@ -15,7 +15,8 @@ namespace Emi.Employees.Domain.Entities
         public decimal Salary { get; set; }
 
 
-        public virtual PositionEntity? PositionTrace { get; set; }
+        public virtual PositionEntity PositionTrace { get; set; }
         public virtual ICollection<PositionHistoryEntity> PositionHistoryTrace { get; set; } = [];
+        public virtual ICollection<EmployeeProjectEntity> EmployeeProjectTrace { get; set; }
     }
 }

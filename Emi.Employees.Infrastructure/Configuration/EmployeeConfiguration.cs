@@ -18,13 +18,18 @@ namespace Emi.Employees.Infrastructure.Configuration
             builder.Property(x => x.Id).IsRequired();
             builder.Property(x => x.Name).HasMaxLength(200).IsRequired(true);
             builder.Property(x => x.CurrentPosition).IsRequired(false);
-            builder.Property(x => x.Salary).IsRequired();
+            builder.Property(x => x.Salary).HasColumnType("decimal(12,2)").IsRequired();
 
-            builder.HasOne(e => e.PositionTrace)
-               .WithMany(p => p.Employees)
-               .HasForeignKey(e => e.CurrentPosition)
+            builder.HasOne(x => x.PositionTrace)
+               .WithMany(x => x.Employees)
+               .HasForeignKey(x => x.CurrentPosition)
                .HasConstraintName("FK_Employee_Position")
                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            builder.HasMany(x => x.PositionHistoryTrace)
+               .WithOne()
+               .HasForeignKey(ph => ph.EmployeeId)
+               .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

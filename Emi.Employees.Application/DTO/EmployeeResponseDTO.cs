@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Emi.Employees.Application.DTO
 {
-    public record EmployeeResponseDTO
+    public class EmployeeResponseDTO
     {
         public required int Id { get; set; }
         public required string Name { get; set; }

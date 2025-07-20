@@ -16,13 +16,17 @@ using System.Threading.Tasks;
 
 namespace Emi.Employees.Application.UseCase
 {
-    public class EmployeeUseCase(IEmployeeRepository _employeeRepository, IPositionHistoryRepository _positionHistory, IUnitOfWork _unitofWork, IMapper _mapper) : IEmployeePort
+    public class EmployeeUseCase(IEmployeeRepository _employeeRepository, IPositionRepository _positionRepository,
+        IPositionHistoryRepository _positionHistory, IUnitOfWork _unitofWork, IMapper _mapper) : IEmployeePort
     {
         public async Task Add(EmployeeDTO employee)
         {
             var entity = _mapper.Map<EmployeeEntity>(employee);
             if (await _employeeRepository.Exist(entity.Id))
                 throw new BadRequestException(JsonSerializer.Serialize(new MessageResponse() { Status = 400, Message = $"Ya existe un empleado con el número de identificación: {entity.Id}" }));
+            if ((await _positionRepository.GetById(employee.CurrentPosition)) is null)
+                throw new BadRequestException(JsonSerializer.Serialize(new MessageResponse() { Status = 400, Message = "El Puesto enviado no es válido." }));
+
             await _employeeRepository.Create(entity);
             await InsertPositionHistory(entity);
             await _unitofWork.SaveChangesAsync();
@@ -69,6 +73,21 @@ namespace Emi.Employees.Application.UseCase
                 StartDate = DateTime.Now
             };
             await _positionHistory.Create(positionHistory);
+        }
+
+        public async Task<List<EmployeeBonusDTO>> CalculateBonusEmployee()
+        {
+            var employeesEntity = await _employeeRepository.GetAll();
+            var EmployeeBonus = employeesEntity.Select(x => new EmployeeBonusDTO
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Position = x.PositionTrace!.Name,
+                Salary = x.Salary,
+                Bonus = x.PositionTrace.IsManager ? x.Salary * 0.20m : x.Salary * 0.10m
+            }).ToList();
+
+            return EmployeeBonus;
         }
     }
 }

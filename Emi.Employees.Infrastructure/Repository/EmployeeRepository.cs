@@ -37,16 +37,16 @@ namespace Emi.Employees.Infrastructure.Repository
             if (pageNumber.HasValue && pageSize.HasValue)
             {
                 Employees = _context.Employees.AsNoTracking()
-                    //.Include(x => x.CurrentPosition)
-                    //.Include(x => x.PositionHistories)
+                    //.Include(x => x.PositionTrace)
+                    //.Include(x => x.PositionHistoryTrace)
                     .OrderBy(x => x.Id)
                     .Skip((pageNumber.Value - 1) * pageSize.Value)
                     .Take(pageSize.Value);
             }
             else {
                 Employees = _context.Employees.AsNoTracking()
-                    //.Include(x => x.CurrentPosition)
-                    //.Include(x => x.PositionHistories)
+                    //.Include(x => x.PositionTrace)
+                    //.Include(x => x.PositionHistoryTrace)
                     .OrderBy(x => x.Id);
             }
 

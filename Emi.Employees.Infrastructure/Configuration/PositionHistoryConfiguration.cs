@@ -17,21 +17,21 @@ namespace Emi.Employees.Infrastructure.Configuration
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Property(x => x.EmployeeId).IsRequired();
-            builder.Property(ph => ph.PositionId).IsRequired();
+            builder.Property(x => x.PositionId).IsRequired();
             builder.Property(x => x.StartDate).IsRequired();
             builder.Property(x => x.EndDate).IsRequired(false);
 
             // Relación con Employee
-            builder.HasOne(ph => ph.Employee)
-                   .WithMany(e => e.PositionHistoryTrace)
-                   .HasForeignKey(ph => ph.EmployeeId)
+            builder.HasOne(x => x.Employee)
+                   .WithMany(x => x.PositionHistoryTrace)
+                   .HasForeignKey(x => x.EmployeeId)
                    .HasConstraintName("FK_PositionHistory_Employee")
                    .OnDelete(DeleteBehavior.Cascade);
 
             // Relación con Position
-            builder.HasOne(ph => ph.Position)
+            builder.HasOne(x => x.Position)
                    .WithMany()
-                   .HasForeignKey(ph => ph.PositionId)
+                   .HasForeignKey(x => x.PositionId)
                    .HasConstraintName("FK_PositionHistory_Position")
                    .OnDelete(DeleteBehavior.Restrict);
         }

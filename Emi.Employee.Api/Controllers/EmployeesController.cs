@@ -52,7 +52,7 @@ namespace Emi.Employee.Api.Controllers
                 InvalidModel.Response(validatorResult);
 
             await _employeePort.Add(employeeDTO);
-            return Ok(new MessageResponse() { Status = StatusCodes.Status200OK, Message = "Registro Exitoso" });
+            return Ok(new MessageResponse() { Status = StatusCodes.Status201Created, Message = "Registro Exitoso" });
         }
 
         /// <summary>

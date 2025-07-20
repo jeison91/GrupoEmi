@@ -10,6 +10,7 @@ namespace Emi.Common.ResponseModel
     {
         public int Status { get; set; }
         public string? Message { get; set; }
+        public dynamic? Data { get; set; }
         public List<ErrorDtl>? Errors { get; set;}
     }
 

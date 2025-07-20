@@ -36,13 +36,17 @@ namespace Emi.Employee.Api.DI
         private static void AddRegisterApplication(IServiceCollection services)
         {
             services.AddAutoMapper(cfg => cfg.AddProfile<EmployeeMapperProfile>(), AppDomain.CurrentDomain.GetAssemblies());
-            services.AddTransient<IEmployeePort, EmployeeUseCase>();   
+            services.AddTransient<IEmployeePort, EmployeeUseCase>();
+            services.AddTransient<IUserPort, UserUseCase>();
         }
 
         private static void AddRegisterInfrastructure(this IServiceCollection services)
         {
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IPositionHistoryRepository, PositionHistoryRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRolRepository, RolRepository>();
+            services.AddScoped<IPositionRepository, PositionRepository>();
         }
 
         private static void Cors(this IServiceCollection services)

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Emi.Employees.Domain.Entities
 {
-    public class ProjectEntity
+    public class UserRolEntity
     {
         public int Id { get; set; }
-        public required string Name { get; set; }
-
-        public virtual ICollection<EmployeeProjectEntity> EmployeeProjectTrace { get; set; }
+        public string Name { get; set; }
+        public string Code { get; set; }
+        public virtual ICollection<UserEntity> UsersTrace { get; set; }
     }
 }

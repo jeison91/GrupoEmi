@@ -18,8 +18,13 @@ namespace Emi.Employees.Application.Mappings
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.CurrentPosition, opt => opt.MapFrom(src => src.CurrentPosition))
                 .ForMember(dest => dest.Salary, opt => opt.MapFrom(src => src.Salary));
-                //.ForAllMembers(opts => opts.PreCondition((src, dest, srcMember))
-                //    => srcMember != null && !string.IsNullOrWhiteSpace(srcMember.ToString())
+            //.ForAllMembers(opts => opts.PreCondition((src, dest, srcMember))
+            //    => srcMember != null && !string.IsNullOrWhiteSpace(srcMember.ToString())
+
+            CreateMap<UserRequest, UserEntity>()
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.UserRole));
         }
     }
 }

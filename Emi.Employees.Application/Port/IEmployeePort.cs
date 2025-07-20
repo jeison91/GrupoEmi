@@ -14,5 +14,6 @@ namespace Emi.Employees.Application.Port
         Task Add(EmployeeDTO employee);
         Task Update(EmployeeDTO employee);
         Task Delete(int Id);
+        Task<List<EmployeeBonusDTO>> CalculateBonusEmployee();
     }
 }

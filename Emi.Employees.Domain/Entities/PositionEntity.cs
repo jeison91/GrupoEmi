@@ -10,6 +10,7 @@ namespace Emi.Employees.Domain.Entities
     {
         public int Id { get; set; }
         public required string Name { get; set; }
+        public bool IsManager { get; set; }
         public virtual ICollection<EmployeeEntity> Employees { get; set; }
     }
 }
