@@ -1,0 +1,30 @@
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Emi.Employees.Domain.Entities;
+
+namespace Emi.Employees.Infrastructure.Configuration
+{
+    public class EmployeeConfiguration : IEntityTypeConfiguration<EmployeeEntity>
+    {
+        public void Configure(EntityTypeBuilder<EmployeeEntity> builder)
+        {
+            builder.ToTable("Employees");
+            builder.HasKey(x => x.Id );
+            builder.Property(x => x.Id).IsRequired();
+            builder.Property(x => x.Name).HasMaxLength(200).IsRequired(true);
+            builder.Property(x => x.CurrentPosition).IsRequired(false);
+            builder.Property(x => x.Salary).IsRequired();
+
+            builder.HasOne(e => e.PositionTrace)
+               .WithMany(p => p.Employees)
+               .HasForeignKey(e => e.CurrentPosition)
+               .HasConstraintName("FK_Employee_Position")
+               .OnDelete(DeleteBehavior.ClientSetNull);
+        }
+    }
+}
