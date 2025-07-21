@@ -18,10 +18,17 @@ namespace Emi.Employees.Infrastructure.Configuration
             builder.Property(x => x.Id).IsRequired();
             builder.Property(x => x.Name).HasMaxLength(100).IsRequired(true);
             builder.Property(x => x.IsManager).IsRequired();
+            builder.Property(x => x.Department).IsRequired();
 
             builder.HasMany(x => x.Employees)
                 .WithOne(x => x.PositionTrace)
                 .HasForeignKey(x => x.CurrentPosition);
+
+            builder.HasOne(x => x.DepartmentTrace)
+              .WithMany(x => x.DepartmentPositionsTrace)
+              .HasForeignKey(x => x.Department)
+              .HasConstraintName("FK_Positions_Department")
+              .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }

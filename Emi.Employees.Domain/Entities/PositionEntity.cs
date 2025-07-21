@@ -11,6 +11,8 @@ namespace Emi.Employees.Domain.Entities
         public int Id { get; set; }
         public required string Name { get; set; }
         public bool IsManager { get; set; }
+        public int Department { get; set; }
+        public DepartmentEntity DepartmentTrace { get; set; }
         public virtual ICollection<EmployeeEntity> Employees { get; set; }
     }
 }

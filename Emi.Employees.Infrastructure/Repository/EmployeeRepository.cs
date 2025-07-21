@@ -14,7 +14,6 @@ namespace Emi.Employees.Infrastructure.Repository
         public async Task Create(EmployeeEntity entity)
         {
             await _context.Employees.AddAsync(entity);
-            //await _context.SaveChangesAsync();
         }
 
         public async Task<bool> Delete(int Id)
@@ -29,7 +28,8 @@ namespace Emi.Employees.Infrastructure.Repository
             return false;
         }
 
-        public async Task<bool> Exist(int Id) => await _context.Employees.AsNoTracking().AnyAsync(e => e.Id == Id);
+        public async Task<bool> Exist(int Id)
+            => await _context.Employees.AsNoTracking().AnyAsync(e => e.Id == Id);
 
         public async Task<List<EmployeeEntity>> GetAll(int? pageNumber = null, int? pageSize = null)
         {
@@ -37,30 +37,51 @@ namespace Emi.Employees.Infrastructure.Repository
             if (pageNumber.HasValue && pageSize.HasValue)
             {
                 Employees = _context.Employees.AsNoTracking()
-                    //.Include(x => x.PositionTrace)
-                    //.Include(x => x.PositionHistoryTrace)
+                    .Include(x => x.PositionTrace)
+                    .Include(x => x.PositionHistoryTrace)
                     .OrderBy(x => x.Id)
                     .Skip((pageNumber.Value - 1) * pageSize.Value)
                     .Take(pageSize.Value);
             }
             else {
                 Employees = _context.Employees.AsNoTracking()
-                    //.Include(x => x.PositionTrace)
-                    //.Include(x => x.PositionHistoryTrace)
+                    .Include(x => x.PositionTrace)
+                    .Include(x => x.PositionHistoryTrace)
                     .OrderBy(x => x.Id);
             }
 
             return await Employees.ToListAsync();
         }
 
-        public async Task<EmployeeEntity> GetById(int Id)
-            => await _context.Employees.AsNoTracking().FirstAsync(x => x.Id == Id);
+        public async Task<EmployeeEntity?> GetById(int Id)
+            => await _context.Employees.AsNoTracking().Include(x => x.PositionTrace).FirstOrDefaultAsync(x => x.Id == Id);
 
         public async Task Update(EmployeeEntity entity)
         {
-            //_context.Entry(entity).State = EntityState.Modified;
             _context.Employees.Update(entity);
-            //await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<EmployeeEntity>> GetEmployeesByDepartment(int idDeparment)
+        {
+            var queryEmployees = _context.Employees
+                .Include(x => x.PositionTrace)
+                .ThenInclude(x => x.DepartmentTrace)
+                .Include(x => x.EmployeeProjectTrace).AsNoTracking();
+
+            queryEmployees = queryEmployees.Where(x =>
+                x.PositionTrace != null &&
+                x.PositionTrace.DepartmentTrace.Id.Equals(idDeparment));
+
+            queryEmployees = queryEmployees.Select(x => new EmployeeEntity
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Salary = x.Salary,
+                PositionTrace = new PositionEntity { Name = x.PositionTrace.Name },
+                PositionHistoryTrace = x.PositionHistoryTrace,
+                EmployeeProjectTrace = x.EmployeeProjectTrace
+            });
+            return await queryEmployees.OrderBy(x => x.Id).ToListAsync();
         }
     }
 }

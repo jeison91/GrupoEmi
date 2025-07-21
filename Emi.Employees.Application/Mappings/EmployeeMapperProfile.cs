@@ -25,6 +25,12 @@ namespace Emi.Employees.Application.Mappings
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.UserRole));
+
+            CreateMap<EmployeeEntity, EmployeeResponseDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.PositionTrace.Name))
+                .ForMember(dest => dest.Salary, opt => opt.MapFrom(src => src.Salary));
         }
     }
 }

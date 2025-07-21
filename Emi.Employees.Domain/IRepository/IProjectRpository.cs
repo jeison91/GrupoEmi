@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Emi.Employees.Domain.Entities
+namespace Emi.Employees.Domain.IRepository
 {
-    internal class ProjectConfiguration
+    public interface IProjectRepository
     {
+        Task<bool> ExistProject(int id);
     }
 }

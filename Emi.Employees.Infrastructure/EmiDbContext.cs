@@ -17,22 +17,13 @@ namespace Emi.Employees.Infrastructure
         public DbSet<PositionEntity> Positions { get; set; }
         public DbSet<PositionHistoryEntity> PositionHistories { get; set; } 
         public DbSet<DepartmentEntity> Departments { get; set; }
-        public DbSet<ProjectEntity> Projects { get; set; }
-        //public DbSet<EmployeeProject> EmployeeProjects { get; set; }
-
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<UserRolEntity> UserRols { get; set; }
+        public DbSet<ProjectEntity> Projects { get; set; }
+        public DbSet<EmployeeProjectEntity> EmployeeProjects { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //if (optionsBuilder.IsConfigured)
-            //{
-            //    SqlServerOptionsExtension CnxOptios = optionsBuilder.Options.Extensions.OfType<SqlServerOptionsExtension>().First();
-            //    string? cnx = CnxOptios.ConnectionString;
-
-            //    if (cnx != null)
-            //        optionsBuilder.UseSqlServer(cnx);//.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            //}
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -43,25 +34,26 @@ namespace Emi.Employees.Infrastructure
             modelBuilder.Entity<DepartmentEntity>().HasData(
                 new DepartmentEntity { Id = 1, Name = "Gerencia" },
                 new DepartmentEntity { Id = 2, Name = "Contabilidad" },
-                new DepartmentEntity { Id = 3, Name = "Tecnología" }
+                new DepartmentEntity { Id = 3, Name = "Tecnología" },
+                new DepartmentEntity { Id = 4, Name = "Administrativo" }
             );
 
             modelBuilder.Entity<PositionEntity>().HasData(
-                new PositionEntity { Id = 1, Name = "Presidente", IsManager = true },
-                new PositionEntity { Id = 2, Name = "Director Tecnología", IsManager = true },
-                new PositionEntity { Id = 3, Name = "Director Contable", IsManager = true },
-                new PositionEntity { Id = 4, Name = "Auxiliar contable", IsManager = false },
-                new PositionEntity { Id = 5, Name = "Director Financiero", IsManager = true },
-                new PositionEntity { Id = 6, Name = "Ingenieros", IsManager = false },
-                new PositionEntity { Id = 7, Name = "Secretaria", IsManager = false }
+                new PositionEntity { Id = 1, Name = "Presidente", IsManager = true, Department = 1 },
+                new PositionEntity { Id = 2, Name = "Director Tecnología", IsManager = true, Department = 3 },
+                new PositionEntity { Id = 3, Name = "Director Contable", IsManager = true, Department = 2 },
+                new PositionEntity { Id = 4, Name = "Auxiliar contable", IsManager = false, Department = 2 },
+                new PositionEntity { Id = 5, Name = "Director Financiero", IsManager = true, Department = 4 },
+                new PositionEntity { Id = 6, Name = "Ingenieros", IsManager = false, Department = 3 },
+                new PositionEntity { Id = 7, Name = "Secretaria", IsManager = false, Department = 4 }
             );
 
             modelBuilder.Entity<ProjectEntity>().HasData(
                 new PositionEntity { Id = 1, Name = "Proyecto 1" },
                 new PositionEntity { Id = 2, Name = "Proyecto 2" },
                 new PositionEntity { Id = 3, Name = "Proyecto 3" },
-                new PositionEntity { Id = 3, Name = "Proyecto 4" },
-                new PositionEntity { Id = 3, Name = "Proyecto 5" }
+                new PositionEntity { Id = 4, Name = "Proyecto 4" },
+                new PositionEntity { Id = 5, Name = "Proyecto 5" }
             );
 
             modelBuilder.Entity<UserRolEntity>().HasData(
@@ -70,16 +62,15 @@ namespace Emi.Employees.Infrastructure
             );
 
             modelBuilder.Entity<UserEntity>().HasData(
-                new UserEntity { Id = 1, Username = "Administrator", Password = "Admin123", Role = 1 },
-                new UserEntity { Id = 2, Username = "User1", Password = "User123*", Role = 2 },
-                new UserEntity { Id = 2, Username = "User2", Password = "useR987*", Role = 2 }
+                new UserEntity { Id = 1, Username = "Administrator", Password = "$2a$11$7QZLqxZsMNMfBVQ.MHgJbepYtK8bfwOvFsFxPhXftPnf.9xx6Kiwm", Role = 1 },
+                new UserEntity { Id = 2, Username = "User1", Password = "$2a$11$OPMkuCk35gy6cz/vrau7N.aFnk0x7vU6UcxgFimuC28VHja1Vb.4a", Role = 2 },
+                new UserEntity { Id = 3, Username = "User2", Password = "$2a$11$hzTMzUXnimQRS4yu7m/Ns.xl4.2KLbgZ4XEnzwFh/Y/dVnlRf.oca", Role = 2 }
             );
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            var result = await base.SaveChangesAsync(cancellationToken);
-            return result;
+            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }

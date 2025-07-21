@@ -13,21 +13,21 @@ namespace Emi.Employees.Infrastructure.Repository
     {
         public async Task Create(PositionHistoryEntity entity)
         {
-            var Employees = await _context.PositionHistories.AsNoTracking().Where(x => x.EmployeeId == entity.EmployeeId).ToListAsync();
+            var Employees = await _context.PositionHistories.Where(x => x.EmployeeId == entity.EmployeeId).ToListAsync();
             if (Employees.Count > 0)
             {
                 var lastEmployee = Employees.Last();
                 if (lastEmployee.PositionId != entity.PositionId)
                 {
                     lastEmployee.EndDate = entity.StartDate;
-                    _context.PositionHistories.Update(entity);
+                    _context.PositionHistories.Update(lastEmployee);
+                    await _context.PositionHistories.AddAsync(entity);
                 }
             }
             else
             {
                 await _context.PositionHistories.AddAsync(entity);
             }
-            //await _context.SaveChangesAsync();
         }
     }
 }

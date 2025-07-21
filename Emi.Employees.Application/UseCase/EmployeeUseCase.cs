@@ -6,13 +6,7 @@ using Emi.Employees.Application.Port;
 using Emi.Employees.Domain.Entities;
 using Emi.Employees.Domain.IRepository;
 using Emi.Employees.Domain.Unit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Emi.Employees.Application.UseCase
 {

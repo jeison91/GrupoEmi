@@ -8,15 +8,10 @@ using Emi.Employees.Domain.Entities;
 using Emi.Employees.Domain.IRepository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Reflection.Metadata;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Emi.Employees.Application.UseCase
 {
@@ -41,28 +36,29 @@ namespace Emi.Employees.Application.UseCase
         {
             var msgResponse = JsonSerializer.Serialize(new MessageResponse() { Status = 400, Message = msg });
             var userEntity = await _userRepository.GetByUserName(userRequest.UserName) ?? throw new BadRequestException(msgResponse);
-            if (!DesEncript(userEntity.Password, userRequest.Password))
+            if (!DesEncript(userRequest.Password, userEntity.Password))
                 throw new BadRequestException(msgResponse);
 
             return CreateToken(userEntity);
         }
 
-        private TokenResponse CreateToken(UserEntity user)
+        public TokenResponse CreateToken(UserEntity user)
         {
             int ExpireMinut = Convert.ToInt32(_configuration["Jwt:ExpiresMinutes"]);
             var claims = new[]
             {
-                new Claim("UserName", user.Username.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim("Document", user.Username.ToString()),
+                new Claim("IdUser", user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.RoleTrace.Code),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim("Policy", user.RoleTrace.Code),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]!));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
-                _configuration["Jwt:Audience"],
                 _configuration["Jwt:Issuer"],
+                _configuration["Jwt:Audience"],
                 claims,
                 expires: DateTime.UtcNow.AddMinutes(ExpireMinut),
                 signingCredentials: credentials);

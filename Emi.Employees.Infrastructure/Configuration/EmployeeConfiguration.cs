@@ -15,9 +15,9 @@ namespace Emi.Employees.Infrastructure.Configuration
         {
             builder.ToTable("Employees");
             builder.HasKey(x => x.Id );
-            builder.Property(x => x.Id).IsRequired();
+            builder.Property(x => x.Id).IsRequired().ValueGeneratedNever();
             builder.Property(x => x.Name).HasMaxLength(200).IsRequired(true);
-            builder.Property(x => x.CurrentPosition).IsRequired(false);
+            builder.Property(x => x.CurrentPosition).IsRequired();
             builder.Property(x => x.Salary).HasColumnType("decimal(12,2)").IsRequired();
 
             builder.HasOne(x => x.PositionTrace)

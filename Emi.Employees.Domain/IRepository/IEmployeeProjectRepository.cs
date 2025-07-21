@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace Emi.Employees.Domain.IRepository
 {
-    public interface IEmployeeRepository : IGenericRepository<EmployeeEntity>
+    public interface IEmployeeProjectRepository
     {
-        Task<List<EmployeeEntity>> GetEmployeesByDepartment(int idDeparment);
+        Task RegisterEmployeeProject(EmployeeProjectEntity employeeProject);
+        Task<bool> ExistRelationEmployeeProject(int employee, int project);
     }
 }

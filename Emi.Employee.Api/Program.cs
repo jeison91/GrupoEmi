@@ -1,9 +1,12 @@
 using Emi.Common.Exceptions;
 using Emi.Employee.Api.DI;
 using Emi.Employees.Application.DTO;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +17,6 @@ builder.Services.AddControllers();
 DependencyInjection.AddRegistration(builder.Services, builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();
@@ -33,9 +34,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("politica");
 app.UseMiddleware(typeof(ExceptionMiddleware));
-//app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapControllers();
 

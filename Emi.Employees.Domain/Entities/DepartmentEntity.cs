@@ -10,5 +10,7 @@ namespace Emi.Employees.Domain.Entities
     {
         public required int Id { get; set; }
         public required string Name { get; set; }
+
+        public ICollection<PositionEntity> DepartmentPositionsTrace { get; set; }
     }
 }

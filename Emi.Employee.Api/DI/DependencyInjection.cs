@@ -16,14 +16,26 @@ using System.Text;
 
 namespace Emi.Employee.Api.DI
 {
+    /// <summary>
+    /// Clase encargada de realizar las IoC del proyecto
+    /// </summary>
     public static class DependencyInjection
     {
+        /// <summary>
+        /// Metodo encargado de realizar las Injection de las clases
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public static IServiceCollection AddRegistration(this IServiceCollection services, IConfiguration configuration)
         {
             AddRegisterDBContext(services, configuration);
             AddRegisterApplication(services);
             AddRegisterInfrastructure(services);
             AddAuthenticationLib(services, configuration);
+            services.AddEndpointsApiExplorer();
+            AddSwaggerConf(services);
+            Cors(services);
             return services;
         }
 
@@ -38,6 +50,7 @@ namespace Emi.Employee.Api.DI
             services.AddAutoMapper(cfg => cfg.AddProfile<EmployeeMapperProfile>(), AppDomain.CurrentDomain.GetAssemblies());
             services.AddTransient<IEmployeePort, EmployeeUseCase>();
             services.AddTransient<IUserPort, UserUseCase>();
+            services.AddScoped<IEmployeeProjectPort, EmployeeProjectUseCase>();
         }
 
         private static void AddRegisterInfrastructure(this IServiceCollection services)
@@ -47,6 +60,8 @@ namespace Emi.Employee.Api.DI
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRolRepository, RolRepository>();
             services.AddScoped<IPositionRepository, PositionRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<IEmployeeProjectRepository, EmployeeProjectRepository>();
         }
 
         private static void Cors(this IServiceCollection services)
@@ -58,7 +73,6 @@ namespace Emi.Employee.Api.DI
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
-            services.AddSwaggerConf();
         }
 
         private static void AddSwaggerConf(this IServiceCollection services)
@@ -95,7 +109,6 @@ namespace Emi.Employee.Api.DI
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
             });
-            services.ConfigureOptions<SwaggerOptions>();
         }
 
         private static void AddAuthenticationLib(this IServiceCollection services, IConfiguration configuration)
@@ -106,27 +119,26 @@ namespace Emi.Employee.Api.DI
             var keyEncript = jwtConfig.GetValue<string>("SecretKey");
 
             // Configuramos la autenticación JWT
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = issuer,
-                        ValidateAudience = true,
-                        ValidAudience = audience,
-                        ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyEncript))
-                    };
-                });
-
-            services.AddAuthorization(options =>
+            services.AddAuthentication(options =>
             {
-                options.AddPolicy("ADM", policy => policy.RequireRole("ADM"));
-                options.AddPolicy("USR", policy => policy.RequireRole("USR"));
+                options.DefaultAuthenticateScheme =
+                JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(cfg =>
+            {
+                cfg.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = issuer,
+                    ValidAudience = audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyEncript))
+                };
             });
+
+            services.AddAuthorizationBuilder()
+                .AddPolicy("ADM", policy => policy.RequireRole("ADM"))
+                .AddPolicy("USR", policy => policy.RequireRole("USR"))
+                .AddPolicy("ALL", policy => policy.RequireRole("ADM", "USR"));
         }
     }
 }

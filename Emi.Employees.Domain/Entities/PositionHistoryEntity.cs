@@ -13,7 +13,7 @@ namespace Emi.Employees.Domain.Entities
         public int EmployeeId { get; set; }
         public int PositionId { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         public virtual EmployeeEntity Employee { get; set; } = null!;
         public virtual PositionEntity Position { get; set; } = null!;
